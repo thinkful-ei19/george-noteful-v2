@@ -26,8 +26,15 @@ router.get('/notes', (req, res, next) => {
   */
   knex.select('id','title', 'content')
     .from('notes')
-    .where('title', 'like', '%${searchTerm}%')
-    .then(res => console.log(res));
+    .where(function(){
+      if(searchTerm) {
+        this.where('title', 'like', `%${searchTerm}%`);
+      }
+    }) 
+    .then(list => {
+      res.json(list);
+    })
+    .catch(err => next(err));
 });
 
 /* ========== GET/READ SINGLE NOTES ========== */
